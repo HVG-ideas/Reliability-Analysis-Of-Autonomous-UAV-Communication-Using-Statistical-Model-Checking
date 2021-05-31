@@ -1,0 +1,1169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_2.dtd'>
+<nta>
+	<declaration>// Declerations and configuration 
+
+const int pos_time_change = 5;
+const int scrub_time = 3;
+const int time_in_state= 1;
+const int trans_time = 4;
+const int rec_time = 4;
+const int min_delay = 10;
+const int pass_count = 10;
+int  x_pos  = 10;
+int  y_pos  = 10;
+int  z_pos  = 10;
+int  x_pos2 = 5;
+int  y_pos2 = 5;
+int  z_pos2 = 5;
+int distance_diff = 9;
+int distance_diff_prev = 0;
+double  x_sq = 0.0;
+double  y_sq = 0.0;
+double  z_sq = 0.0;
+int pos_prob = 9980;
+int neg_prob = 20;
+int counter_dx = 0;
+bool replac_need= true;
+bool trans_cond = true;
+bool rec_cond = true;
+
+bool data_exchange_starts = false;
+broadcast chan forward1,forward2,forward3,forward4,forward5,forward6,back1,back2,back3,back4,back5,back6;
+
+broadcast chan forward_no_motion,forward_no_motion2;
+
+broadcast chan back_no_motion;
+broadcast chan back_no_motion2;
+broadcast chan start;
+broadcast chan done;
+broadcast chan start_br;
+broadcast chan start_exch,pass,fail;
+
+
+const double transmitter_gain = 2.8;    
+const double rec_gain = 2.8;
+bool change = true;
+int r  = 1;
+const double wavelength  =  0.125;
+const int L = 1;
+
+
+const double power_transmitted= 0.0015848931925;
+//const double power_transmitted =0.0017378008287;
+//const double power_transmitted = 0.0019054607180;
+//const double power_transmitted =0.0020892961309;
+//const double power_transmitted =0.0022908676528;
+//const double power_transmitted= 0.0025118864315;
+
+//At dBm = 3.0
+//const double power_transmitted =0.0019952623150;
+
+const double M_PI= 3.14159265358979312;
+
+
+
+
+const int thresh_power_recieved = 80;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</declaration>
+	<template>
+		<name x="5" y="5">rep</name>
+		<declaration>// Place local declarations here
+clock t;
+//double distance;
+//calculating the distance
+
+//calculating the recieved power in mW first then in use 10log(pr in mW) to get the dB
+int  pr()
+{
+    int power_recieved_inDB_int = 0;
+    double power_recieved_inDB = 0.0;
+    double power_recieved_inMW = 0.0;
+
+    if(distance_diff &gt; 0)
+    {
+        //power receved here is in milli watt
+        power_recieved_inMW = (power_transmitted * transmitter_gain * rec_gain * wavelength * wavelength)/(((4*M_PI)*(4*M_PI))*(distance_diff*distance_diff)*L) ;
+        //power recieved in dbm is 10log(power recieved in mW)
+        power_recieved_inDB = 10*(log(power_recieved_inMW));
+        power_recieved_inDB_int = fint(power_recieved_inDB);
+        return  power_recieved_inDB_int;
+    }
+    else
+    {
+         return -200;
+    }
+}
+
+
+bool guard1(){
+     
+  //  double power_recieved_inDB;
+    bool crr = false;
+    int xy;
+    xy = pr(); 
+    xy = xy * -1;
+   
+    if( xy &lt;= thresh_power_recieved)
+    {
+       crr = true;
+    }
+    else
+    {
+        crr = false;
+    }
+     return crr;
+}
+
+bool guard2(){
+     
+  //  double power_recieved_inDB;
+    bool crr = false;
+    int xy;
+    xy = pr();
+    xy = xy * -1;
+    if( xy &lt;= thresh_power_recieved)
+    {
+       crr = true;
+    }
+    else
+    {
+        crr = false;
+    }
+     return crr;
+}
+
+bool guard3(){
+     
+  //  double power_recieved_inDB;
+    bool crr = false;
+    int xy;
+    xy = pr();
+    xy = xy * -1;
+    if( xy &lt;= thresh_power_recieved)
+    {
+       crr = true;
+    }
+    else
+    {
+        crr = false;
+    }
+     return crr;
+}
+ 
+bool guard_confirmed(){
+//  double power_recieved_inDB;
+    bool crr = false;
+    int xy;
+    xy = pr();
+    xy = xy * -1;
+    if( xy &lt;= thresh_power_recieved)
+    {
+       crr = true;
+    }
+    else
+    {
+        crr = false;
+    }
+     return crr;
+
+}
+
+  
+  
+
+
+</declaration>
+		<location id="id0" x="-17" y="-518">
+			<name x="-34" y="-552">Initial</name>
+		</location>
+		<location id="id1" x="102" y="-459">
+			<name x="119" y="-467">Replacement_fail</name>
+			<label kind="invariant" x="127" y="-450">t&lt;=min_delay</label>
+		</location>
+		<location id="id2" x="-17" y="-263">
+			<name x="-229" y="-280">Replacement_Acknowledgment</name>
+			<label kind="invariant" x="-127" y="-263">t&lt;=min_delay</label>
+		</location>
+		<location id="id3" x="-17" y="-459">
+			<name x="-195" y="-484">Replacement_broadcast</name>
+			<label kind="invariant" x="-127" y="-467">t&lt;=min_delay</label>
+		</location>
+		<location id="id4" x="-17" y="-170">
+			<name x="-246" y="-178">Replacement_Finalized_received</name>
+			<label kind="invariant" x="-136" y="-161">t&lt;=min_delay</label>
+		</location>
+		<location id="id5" x="-17" y="-51">
+			<name x="-153" y="-51">Data_Exchange</name>
+		</location>
+		<location id="id6" x="-17" y="17">
+			<name x="-204" y="0">Replacement_finalize_done</name>
+		</location>
+		<location id="id7" x="-17" y="-365">
+			<name x="-195" y="-373">Replacement_confirmed</name>
+			<label kind="invariant" x="-8" y="-357">t&lt;=min_delay</label>
+		</location>
+		<init ref="id0"/>
+		<transition>
+			<source ref="id7"/>
+			<target ref="id1"/>
+			<label kind="guard" x="110" y="-425">t&gt;= min_delay &amp;&amp; 
+(guard_confirmed() == false || 
+rec_cond == false||
+trans_cond == false)</label>
+			<label kind="assignment" x="25" y="-391">t = 0</label>
+			<nail x="102" y="-365"/>
+			<nail x="102" y="-374"/>
+		</transition>
+		<transition>
+			<source ref="id7"/>
+			<target ref="id2"/>
+			<label kind="guard" x="-204" y="-357">guard_confirmed() == true &amp;&amp;
+t&gt;=min_delay &amp;&amp; 
+trans_cond == true&amp;&amp; 
+rec_cond == true</label>
+			<label kind="assignment" x="-17" y="-314">t = 0</label>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id7"/>
+			<label kind="guard" x="-178" y="-450">guard1() == true &amp;&amp;
+t&gt;=min_delay &amp;&amp; 
+trans_cond == true &amp;&amp;
+rec_cond == true</label>
+			<label kind="assignment" x="-8" y="-416">t = 0</label>
+		</transition>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id1"/>
+			<label kind="synchronisation" x="119" y="-85">fail?</label>
+			<label kind="assignment" x="110" y="-119">t =0</label>
+			<nail x="102" y="-51"/>
+			<nail x="102" y="-272"/>
+			<nail x="102" y="-340"/>
+			<nail x="102" y="-416"/>
+		</transition>
+		<transition>
+			<source ref="id4"/>
+			<target ref="id1"/>
+			<label kind="guard" x="119" y="-255">t&gt;= min_delay &amp;&amp; 
+(guard3() == false || 
+rec_cond == false||
+trans_cond == false)</label>
+			<label kind="assignment" x="34" y="-204">t = 0</label>
+			<nail x="102" y="-170"/>
+			<nail x="102" y="-306"/>
+			<nail x="102" y="-374"/>
+			<nail x="102" y="-416"/>
+		</transition>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id6"/>
+			<label kind="synchronisation" x="-85" y="-34">pass?</label>
+			<label kind="assignment" x="8" y="-51">t = 0,
+distance_diff = 0,
+x_pos = 0,
+y_pos = 0,
+z_pos = 0,
+x_pos2 = 0,
+y_pos2 = 0,
+z_pos2 = 0,
+x_sq = 0,
+y_sq = 0,
+z_sq = 0</label>
+		</transition>
+		<transition>
+			<source ref="id4"/>
+			<target ref="id5"/>
+			<label kind="guard" x="-170" y="-136">guard3() == true &amp;&amp;
+t&gt;=min_delay &amp;&amp; 
+trans_cond == true &amp;&amp;
+rec_cond == true</label>
+			<label kind="synchronisation" x="-17" y="-127">start_exch!</label>
+			<label kind="assignment" x="-17" y="-102">t = 0</label>
+			<nail x="-17" y="-136"/>
+			<nail x="-17" y="-127"/>
+		</transition>
+		<transition>
+			<source ref="id2"/>
+			<target ref="id4"/>
+			<label kind="guard" x="-161" y="-246">guard2() == true &amp;&amp;
+t&gt;=min_delay&amp;&amp; 
+trans_cond == true &amp;&amp;
+rec_cond == true</label>
+			<label kind="assignment" x="-8" y="-246">t = 0</label>
+		</transition>
+		<transition>
+			<source ref="id2"/>
+			<target ref="id1"/>
+			<label kind="guard" x="119" y="-340">t&gt;= min_delay &amp;&amp; 
+(guard2() == false || 
+rec_cond == false||
+trans_cond == false)</label>
+			<label kind="assignment" x="34" y="-280">t = 0</label>
+			<nail x="102" y="-263"/>
+			<nail x="102" y="-340"/>
+			<nail x="102" y="-408"/>
+			<nail x="102" y="-425"/>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id1"/>
+			<label kind="guard" x="119" y="-544">t&gt;= min_delay &amp;&amp; 
+(guard1() == false || 
+rec_cond == false||
+trans_cond == false)</label>
+			<label kind="assignment" x="34" y="-476">t = 0</label>
+			<nail x="17" y="-459"/>
+			<nail x="25" y="-459"/>
+			<nail x="76" y="-459"/>
+		</transition>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id3"/>
+			<label kind="synchronisation" x="-17" y="-505">start_br?</label>
+		</transition>
+		<transition>
+			<source ref="id1"/>
+			<target ref="id0"/>
+			<label kind="assignment" x="-153" y="-569">distance_diff = 0,t = 0,replac_need = true,trans_cond = true,rec_cond = true</label>
+			<nail x="102" y="-527"/>
+			<nail x="68" y="-527"/>
+			<nail x="59" y="-527"/>
+			<nail x="85" y="-527"/>
+			<nail x="17" y="-527"/>
+			<nail x="25" y="-527"/>
+			<nail x="0" y="-527"/>
+		</transition>
+	</template>
+	<template>
+		<name>data_exch</name>
+		<declaration>clock t;
+
+int  pr()
+{
+    int power_recieved_inDB_int = 0;
+    double power_recieved_inDB = 0.0;
+    double power_recieved_inMW = 0.0;
+
+    if(distance_diff &gt; 0)
+    {
+        //power receved here is in milli watt
+        power_recieved_inMW = (power_transmitted * transmitter_gain * rec_gain * wavelength * wavelength)/(((4*M_PI)*(4*M_PI))*(distance_diff*distance_diff)*L) ;
+        //power recieved in dbm is 10log(power recieved in mW)
+        power_recieved_inDB = 10*(log(power_recieved_inMW));
+        power_recieved_inDB_int = fint(power_recieved_inDB);
+        return  power_recieved_inDB_int;
+    }
+    else
+    {
+         return -200;
+    }
+}
+
+
+bool guard_t_1(){
+     
+  //  double power_recieved_inDB;
+    bool crr = false;
+    int xy;
+    xy = pr(); 
+    xy = xy * -1;
+   
+    if( xy &lt;= thresh_power_recieved)
+    {
+       crr = true;
+    }
+    else
+    {
+        crr = false;
+    }
+     return crr;
+}
+
+bool guard_t_2(){
+     
+  //  double power_recieved_inDB;
+    bool crr = false;
+    int xy;
+    xy = pr(); 
+    xy = xy * -1;
+   
+    if( xy &lt;= thresh_power_recieved)
+    {
+       crr = true;
+    }
+    else
+    {
+        crr = false;
+    }
+     return crr;
+}
+
+
+</declaration>
+		<location id="id8" x="-246" y="-195">
+			<name x="-263" y="-229">Initial</name>
+		</location>
+		<location id="id9" x="-127" y="-195">
+			<name x="-178" y="-238">time_state_1</name>
+			<label kind="invariant" x="-178" y="-170">t&lt;=time_in_state</label>
+		</location>
+		<location id="id10" x="-25" y="-195">
+			<name x="-17" y="-229">time_state_2</name>
+			<label kind="invariant" x="-51" y="-170">t&lt;=time_in_state</label>
+		</location>
+		<location id="id11" x="476" y="-195">
+			<name x="466" y="-229">Pass</name>
+		</location>
+		<location id="id12" x="76" y="17">
+			<name x="93" y="8">Fail</name>
+		</location>
+		<init ref="id8"/>
+		<transition>
+			<source ref="id9"/>
+			<target ref="id11"/>
+			<label kind="guard" x="195" y="-42">t&gt;=time_in_state &amp;&amp; 
+counter_dx &gt;= pass_count</label>
+			<nail x="-127" y="-42"/>
+			<nail x="289" y="-42"/>
+			<nail x="476" y="-42"/>
+		</transition>
+		<transition>
+			<source ref="id9"/>
+			<target ref="id12"/>
+			<label kind="guard" x="-119" y="110">t&gt;=time_in_state &amp;&amp; 
+(guard_t_1() == false ||rec_cond == false||trans_cond == false)</label>
+			<label kind="synchronisation" x="85" y="59">fail!</label>
+			<nail x="-127" y="110"/>
+			<nail x="76" y="110"/>
+			<nail x="76" y="59"/>
+		</transition>
+		<transition>
+			<source ref="id10"/>
+			<target ref="id12"/>
+			<label kind="guard" x="76" y="-102">t&gt;=time_in_state &amp;&amp;
+(guard_t_2() == false ||rec_cond == false||trans_cond == false)</label>
+			<label kind="synchronisation" x="85" y="-144">fail!</label>
+			<nail x="76" y="-195"/>
+			<nail x="76" y="-144"/>
+			<nail x="76" y="-119"/>
+		</transition>
+		<transition>
+			<source ref="id10"/>
+			<target ref="id11"/>
+			<label kind="guard" x="161" y="-229">t&gt;=time_in_state &amp;&amp; 
+counter_dx &gt;= pass_count</label>
+			<label kind="synchronisation" x="229" y="-187">pass!</label>
+		</transition>
+		<transition>
+			<source ref="id9"/>
+			<target ref="id10"/>
+			<label kind="guard" x="-144" y="-391">guard_t_1() == true &amp;&amp;
+t&gt;=time_in_state &amp;&amp; 
+trans_cond == true &amp;&amp;
+rec_cond == true &amp;&amp; 
+counter_dx &lt; pass_count</label>
+			<label kind="assignment" x="-144" y="-297">counter_dx = counter_dx + 1,
+t = 0</label>
+			<nail x="-127" y="-263"/>
+			<nail x="-25" y="-263"/>
+			<nail x="-25" y="-229"/>
+		</transition>
+		<transition>
+			<source ref="id10"/>
+			<target ref="id9"/>
+			<label kind="guard" x="-127" y="-34">guard_t_2() == true &amp;&amp;
+t&gt;=time_in_state &amp;&amp; 
+trans_cond == true &amp;&amp;
+rec_cond == true &amp;&amp;
+counter_dx &lt; pass_count</label>
+			<label kind="assignment" x="-119" y="59">counter_dx = counter_dx + 1,
+t = 0</label>
+			<nail x="-25" y="-136"/>
+			<nail x="-25" y="-42"/>
+			<nail x="-127" y="-42"/>
+		</transition>
+		<transition>
+			<source ref="id8"/>
+			<target ref="id9"/>
+			<label kind="synchronisation" x="-228" y="-212">start_exch?</label>
+			<label kind="assignment" x="-212" y="-195">t = 0</label>
+		</transition>
+	</template>
+	<template>
+		<name>Tr</name>
+		<declaration>clock t_tr;</declaration>
+		<location id="id13" x="-170" y="-331">
+			<name x="-153" y="-348">Fail</name>
+			<label kind="invariant" x="-297" y="-408">t_tr&lt;=scrub_time</label>
+		</location>
+		<location id="id14" x="-357" y="-331">
+			<name x="-383" y="-365">Working</name>
+			<label kind="invariant" x="-416" y="-382">t_tr&lt;=trans_time</label>
+		</location>
+		<branchpoint id="id15" x="-357" y="-195">
+		</branchpoint>
+		<init ref="id14"/>
+		<transition>
+			<source ref="id15"/>
+			<target ref="id14"/>
+			<label kind="assignment" x="-459" y="-170">trans_cond = true,
+t_tr =0</label>
+			<label kind="probability" x="-433" y="-187">pos_prob</label>
+			<nail x="-442" y="-195"/>
+			<nail x="-442" y="-195"/>
+			<nail x="-450" y="-195"/>
+			<nail x="-476" y="-195"/>
+			<nail x="-476" y="-238"/>
+			<nail x="-476" y="-306"/>
+			<nail x="-476" y="-331"/>
+		</transition>
+		<transition>
+			<source ref="id13"/>
+			<target ref="id14"/>
+			<label kind="guard" x="-297" y="-391">t_tr&gt;=scrub_time</label>
+			<label kind="assignment" x="-297" y="-374">trans_cond = true,
+t_tr =0</label>
+		</transition>
+		<transition>
+			<source ref="id15"/>
+			<target ref="id13"/>
+			<label kind="assignment" x="-272" y="-161">trans_cond = false,
+t_tr =0</label>
+			<label kind="probability" x="-238" y="-187">neg_prob</label>
+			<nail x="-263" y="-195"/>
+			<nail x="-170" y="-195"/>
+			<nail x="-170" y="-289"/>
+		</transition>
+		<transition controllable="false">
+			<source ref="id14"/>
+			<target ref="id15"/>
+			<label kind="guard" x="-467" y="-323">t_tr&gt;=trans_time</label>
+			<label kind="assignment" x="-450" y="-297">t_tr = 0</label>
+		</transition>
+	</template>
+	<template>
+		<name>Rec</name>
+		<declaration>clock t;</declaration>
+		<location id="id16" x="59" y="-408">
+			<name x="59" y="-450">Fail</name>
+			<label kind="invariant" x="34" y="-467">t&lt;=scrub_time</label>
+		</location>
+		<location id="id17" x="-153" y="-408">
+			<name x="-170" y="-459">Working</name>
+			<label kind="invariant" x="-195" y="-442">t&lt;=rec_time</label>
+		</location>
+		<branchpoint id="id18" x="-153" y="-289">
+		</branchpoint>
+		<init ref="id17"/>
+		<transition>
+			<source ref="id18"/>
+			<target ref="id17"/>
+			<label kind="assignment" x="-263" y="-255">rec_cond = true,
+t =0</label>
+			<label kind="probability" x="-255" y="-280">pos_prob</label>
+			<nail x="-161" y="-289"/>
+			<nail x="-195" y="-289"/>
+			<nail x="-238" y="-289"/>
+			<nail x="-255" y="-289"/>
+			<nail x="-255" y="-314"/>
+			<nail x="-255" y="-348"/>
+			<nail x="-255" y="-408"/>
+			<nail x="-187" y="-408"/>
+		</transition>
+		<transition>
+			<source ref="id16"/>
+			<target ref="id17"/>
+			<label kind="guard" x="-85" y="-467">t&gt;=scrub_time</label>
+			<label kind="assignment" x="-85" y="-450">rec_cond = true,
+t =0</label>
+		</transition>
+		<transition>
+			<source ref="id18"/>
+			<target ref="id16"/>
+			<label kind="assignment" x="-59" y="-255">rec_cond = false,
+t =0</label>
+			<label kind="probability" x="-17" y="-272">neg_prob</label>
+			<nail x="59" y="-289"/>
+			<nail x="59" y="-340"/>
+			<nail x="59" y="-374"/>
+		</transition>
+		<transition controllable="false">
+			<source ref="id17"/>
+			<target ref="id18"/>
+			<label kind="guard" x="-229" y="-399">t&gt;=rec_time</label>
+			<label kind="assignment" x="-204" y="-382">t = 0</label>
+		</transition>
+	</template>
+	<template>
+		<name>d</name>
+		<declaration>clock x;
+
+
+void distanceee()
+{
+   
+    double distan;
+    int dist_int;
+    distance_diff_prev = distance_diff;
+    x_sq = (x_pos2 - x_pos) * (x_pos2 - x_pos);
+    y_sq = (y_pos2 - y_pos) * (y_pos2 - y_pos);
+    z_sq = (z_pos2 - z_pos) * (z_pos2 - z_pos);
+    distan = sqrt((x_sq + y_sq + z_sq));
+      
+    dist_int = fint(distan);
+    distance_diff = dist_int;
+    change = true;
+    
+      
+}
+</declaration>
+		<location id="id19" x="-348" y="-8">
+			<name x="-408" y="-17">Start</name>
+		</location>
+		<location id="id20" x="-153" y="-8">
+			<name x="-136" y="-17">End</name>
+		</location>
+		<init ref="id19"/>
+		<transition>
+			<source ref="id20"/>
+			<target ref="id19"/>
+			<label kind="synchronisation" x="-306" y="-25">back_no_motion2?</label>
+			<nail x="-229" y="-8"/>
+			<nail x="-272" y="-8"/>
+			<nail x="-306" y="-8"/>
+		</transition>
+		<transition>
+			<source ref="id20"/>
+			<target ref="id19"/>
+			<label kind="synchronisation" x="-331" y="-221">back6?</label>
+			<label kind="assignment" x="-237" y="-221">distanceee()</label>
+			<nail x="-153" y="-25"/>
+			<nail x="-153" y="-42"/>
+			<nail x="-153" y="-93"/>
+			<nail x="-153" y="-221"/>
+			<nail x="-170" y="-221"/>
+			<nail x="-255" y="-221"/>
+			<nail x="-357" y="-221"/>
+		</transition>
+		<transition>
+			<source ref="id20"/>
+			<target ref="id19"/>
+			<label kind="synchronisation" x="-331" y="-255">back5?</label>
+			<label kind="assignment" x="-211" y="-255">distanceee()</label>
+			<nail x="-153" y="-25"/>
+			<nail x="-153" y="-59"/>
+			<nail x="-153" y="-255"/>
+			<nail x="-229" y="-255"/>
+			<nail x="-357" y="-255"/>
+		</transition>
+		<transition>
+			<source ref="id20"/>
+			<target ref="id19"/>
+			<label kind="synchronisation" x="-289" y="-297">back4?</label>
+			<label kind="assignment" x="-228" y="-297">distanceee()</label>
+			<nail x="-153" y="-25"/>
+			<nail x="-153" y="-34"/>
+			<nail x="-153" y="-85"/>
+			<nail x="-153" y="-297"/>
+			<nail x="-246" y="-297"/>
+			<nail x="-357" y="-297"/>
+		</transition>
+		<transition>
+			<source ref="id19"/>
+			<target ref="id20"/>
+			<label kind="synchronisation" x="-323" y="357">forward_no_motion2?</label>
+			<nail x="-348" y="119"/>
+			<nail x="-348" y="382"/>
+			<nail x="-204" y="382"/>
+			<nail x="-144" y="382"/>
+			<nail x="-153" y="127"/>
+			<nail x="-153" y="59"/>
+		</transition>
+		<transition>
+			<source ref="id19"/>
+			<target ref="id20"/>
+			<label kind="synchronisation" x="-340" y="408">forward6?</label>
+			<nail x="-348" y="144"/>
+			<nail x="-348" y="442"/>
+			<nail x="-144" y="442"/>
+			<nail x="-153" y="255"/>
+			<nail x="-153" y="178"/>
+			<nail x="-153" y="85"/>
+			<nail x="-153" y="59"/>
+		</transition>
+		<transition>
+			<source ref="id19"/>
+			<target ref="id20"/>
+			<label kind="synchronisation" x="-340" y="450">forward5?</label>
+			<nail x="-348" y="476"/>
+			<nail x="-144" y="476"/>
+			<nail x="-144" y="365"/>
+			<nail x="-153" y="272"/>
+			<nail x="-153" y="195"/>
+			<nail x="-153" y="136"/>
+			<nail x="-153" y="76"/>
+		</transition>
+		<transition>
+			<source ref="id19"/>
+			<target ref="id20"/>
+			<label kind="synchronisation" x="-340" y="510">forward4?</label>
+			<nail x="-348" y="76"/>
+			<nail x="-348" y="535"/>
+			<nail x="-144" y="535"/>
+			<nail x="-153" y="76"/>
+		</transition>
+		<transition>
+			<source ref="id20"/>
+			<target ref="id19"/>
+			<label kind="synchronisation" x="-272" y="-340">back_no_motion?</label>
+			<nail x="-153" y="-59"/>
+			<nail x="-153" y="-102"/>
+			<nail x="-153" y="-153"/>
+			<nail x="-153" y="-340"/>
+			<nail x="-212" y="-340"/>
+			<nail x="-272" y="-340"/>
+			<nail x="-306" y="-340"/>
+			<nail x="-357" y="-340"/>
+		</transition>
+		<transition>
+			<source ref="id19"/>
+			<target ref="id20"/>
+			<label kind="synchronisation" x="-306" y="544">forward_no_motion?</label>
+			<nail x="-348" y="578"/>
+			<nail x="-144" y="578"/>
+			<nail x="-144" y="365"/>
+			<nail x="-153" y="169"/>
+			<nail x="-153" y="143"/>
+		</transition>
+		<transition>
+			<source ref="id20"/>
+			<target ref="id19"/>
+			<label kind="synchronisation" x="-323" y="-365">back3?</label>
+			<label kind="assignment" x="-203" y="-365">distanceee()</label>
+			<nail x="-153" y="-42"/>
+			<nail x="-153" y="-76"/>
+			<nail x="-153" y="-365"/>
+			<nail x="-221" y="-365"/>
+			<nail x="-357" y="-365"/>
+		</transition>
+		<transition>
+			<source ref="id20"/>
+			<target ref="id19"/>
+			<label kind="synchronisation" x="-297" y="-399">back2?</label>
+			<label kind="assignment" x="-289" y="-391">distanceee()</label>
+			<nail x="-153" y="-416"/>
+			<nail x="-357" y="-416"/>
+			<nail x="-348" y="-68"/>
+			<nail x="-348" y="-51"/>
+			<nail x="-348" y="-51"/>
+			<nail x="-348" y="-34"/>
+		</transition>
+		<transition>
+			<source ref="id19"/>
+			<target ref="id20"/>
+			<label kind="synchronisation" x="-280" y="586">forward3?</label>
+			<nail x="-348" y="612"/>
+			<nail x="-144" y="612"/>
+			<nail x="-144" y="399"/>
+			<nail x="-153" y="170"/>
+			<nail x="-153" y="153"/>
+		</transition>
+		<transition>
+			<source ref="id19"/>
+			<target ref="id20"/>
+			<label kind="synchronisation" x="-314" y="637">forward2?</label>
+			<nail x="-348" y="178"/>
+			<nail x="-348" y="654"/>
+			<nail x="-221" y="654"/>
+			<nail x="-144" y="654"/>
+			<nail x="-144" y="425"/>
+			<nail x="-153" y="229"/>
+		</transition>
+		<transition>
+			<source ref="id20"/>
+			<target ref="id19"/>
+			<label kind="synchronisation" x="-263" y="-459">back1?</label>
+			<label kind="assignment" x="-212" y="-450">distanceee()</label>
+			<nail x="-153" y="-51"/>
+			<nail x="-153" y="-425"/>
+			<nail x="-246" y="-425"/>
+			<nail x="-357" y="-425"/>
+		</transition>
+		<transition>
+			<source ref="id19"/>
+			<target ref="id20"/>
+			<label kind="synchronisation" x="-255" y="680">forward1?</label>
+			<nail x="-348" y="671"/>
+			<nail x="-144" y="671"/>
+			<nail x="-144" y="476"/>
+		</transition>
+	</template>
+	<template>
+		<name>dr1</name>
+		<declaration>//double X_axis,Y_axis,Z_axis;
+clock t;
+int i;
+
+
+//updating the position in x,y,z axis
+void x_update()
+{
+     double  rand_s = random(4);
+    int  rand_int = fint(rand_s);
+    x_pos = x_pos + rand_int;
+}
+
+void y_update()
+{
+     double  rand_s = random(4);
+     int  rand_int = fint(rand_s);
+     y_pos = y_pos + rand_int;
+}
+void z_update()
+{
+    double  rand_s = random(4);
+    int  rand_int = fint(rand_s);
+    z_pos = z_pos + rand_int;
+}
+
+//calcualting the square of the differences between the coordinates
+
+</declaration>
+		<location id="id21" x="348" y="-357">
+			<label kind="invariant" x="229" y="-331">t&lt;=pos_time_change</label>
+		</location>
+		<location id="id22" x="857" y="-484">
+			<name x="874" y="-501">No_motion</name>
+			<label kind="invariant" x="807" y="-527">t&lt;=pos_time_change</label>
+		</location>
+		<location id="id23" x="-59" y="-204">
+			<name x="-76" y="-178">X_axis</name>
+			<label kind="invariant" x="-76" y="-153">t&lt;=pos_time_change</label>
+		</location>
+		<location id="id24" x="849" y="-204">
+			<name x="832" y="-170">Y_axis</name>
+			<label kind="invariant" x="790" y="-144">t&lt;=pos_time_change</label>
+		</location>
+		<location id="id25" x="-103" y="-484">
+			<name x="-113" y="-518">z_axis</name>
+			<label kind="invariant" x="-102" y="-467">t&lt;=pos_time_change</label>
+		</location>
+		<location id="id26" x="340" y="-731">
+			<name x="280" y="-765">broadcast_sent</name>
+			<label kind="invariant" x="330" y="-714">t&lt;=pos_time_change</label>
+		</location>
+		<init ref="id21"/>
+		<transition>
+			<source ref="id26"/>
+			<target ref="id21"/>
+			<label kind="guard" x="383" y="-765">replac_need == false &amp;&amp; 
+t&gt;=pos_time_change</label>
+			<nail x="365" y="-731"/>
+			<nail x="501" y="-731"/>
+			<nail x="510" y="-731"/>
+			<nail x="493" y="-680"/>
+			<nail x="459" y="-595"/>
+			<nail x="416" y="-510"/>
+			<nail x="374" y="-408"/>
+		</transition>
+		<transition>
+			<source ref="id21"/>
+			<target ref="id26"/>
+			<label kind="guard" x="179" y="-578">replac_need == true</label>
+			<label kind="synchronisation" x="179" y="-561">start_br!</label>
+			<label kind="assignment" x="179" y="-544">replac_need = false</label>
+			<nail x="161" y="-731"/>
+			<nail x="272" y="-731"/>
+		</transition>
+		<transition>
+			<source ref="id22"/>
+			<target ref="id21"/>
+			<label kind="guard" x="705" y="-382">t&gt;=pos_time_change</label>
+			<label kind="synchronisation" x="569" y="-382">back_no_motion!</label>
+			<label kind="assignment" x="756" y="-399">t = 0</label>
+			<nail x="857" y="-357"/>
+			<nail x="763" y="-357"/>
+			<nail x="678" y="-357"/>
+			<nail x="593" y="-357"/>
+			<nail x="517" y="-357"/>
+			<nail x="449" y="-357"/>
+			<nail x="390" y="-357"/>
+		</transition>
+		<transition>
+			<source ref="id21"/>
+			<target ref="id22"/>
+			<label kind="guard" x="569" y="-518">t&gt;=pos_time_change&amp;&amp;
+replac_need == false</label>
+			<label kind="synchronisation" x="391" y="-501">forward_no_motion!</label>
+			<label kind="assignment" x="391" y="-484">t = 0</label>
+			<nail x="348" y="-374"/>
+			<nail x="348" y="-433"/>
+			<nail x="348" y="-484"/>
+			<nail x="373" y="-484"/>
+		</transition>
+		<transition>
+			<source ref="id21"/>
+			<target ref="id25"/>
+			<label kind="guard" x="8" y="-518">t&gt;=pos_time_change &amp;&amp;
+replac_need == false</label>
+			<label kind="synchronisation" x="153" y="-501">forward3!</label>
+			<label kind="assignment" x="153" y="-484">z_update(),
+t = 0</label>
+			<nail x="348" y="-382"/>
+			<nail x="348" y="-433"/>
+			<nail x="348" y="-459"/>
+			<nail x="348" y="-484"/>
+			<nail x="135" y="-484"/>
+		</transition>
+		<transition>
+			<source ref="id25"/>
+			<target ref="id21"/>
+			<label kind="guard" x="-85" y="-382">t&gt;=pos_time_change</label>
+			<label kind="synchronisation" x="-85" y="-365">back3!</label>
+			<label kind="assignment" x="-25" y="-365">t = 0</label>
+			<nail x="-103" y="-348"/>
+			<nail x="186" y="-348"/>
+			<nail x="305" y="-348"/>
+			<nail x="322" y="-348"/>
+		</transition>
+		<transition>
+			<source ref="id24"/>
+			<target ref="id21"/>
+			<label kind="guard" x="578" y="-323">t&gt;=pos_time_change</label>
+			<label kind="synchronisation" x="595" y="-357">back2!</label>
+			<label kind="assignment" x="620" y="-340">t = 0</label>
+			<nail x="849" y="-246"/>
+			<nail x="849" y="-340"/>
+			<nail x="577" y="-340"/>
+			<nail x="407" y="-340"/>
+			<nail x="356" y="-340"/>
+		</transition>
+		<transition>
+			<source ref="id21"/>
+			<target ref="id24"/>
+			<label kind="guard" x="578" y="-195">t&gt;=pos_time_change&amp;&amp;
+replac_need == false</label>
+			<label kind="synchronisation" x="433" y="-204">forward2!</label>
+			<label kind="assignment" x="493" y="-204">y_update(),
+t = 0</label>
+			<nail x="348" y="-204"/>
+			<nail x="509" y="-204"/>
+			<nail x="534" y="-204"/>
+			<nail x="560" y="-204"/>
+		</transition>
+		<transition>
+			<source ref="id23"/>
+			<target ref="id21"/>
+			<label kind="guard" x="-102" y="-272">t&gt;=pos_time_change</label>
+			<label kind="synchronisation" x="-161" y="-314">back1!</label>
+			<label kind="assignment" x="-93" y="-340">t = 0</label>
+			<nail x="-86" y="-204"/>
+			<nail x="-103" y="-204"/>
+			<nail x="-111" y="-204"/>
+			<nail x="-111" y="-289"/>
+			<nail x="-111" y="-340"/>
+			<nail x="186" y="-340"/>
+			<nail x="271" y="-340"/>
+			<nail x="339" y="-340"/>
+		</transition>
+		<transition>
+			<source ref="id21"/>
+			<target ref="id23"/>
+			<label kind="guard" x="144" y="-221">t&gt;=pos_time_change&amp;&amp;
+replac_need == false</label>
+			<label kind="synchronisation" x="238" y="-195">forward1!</label>
+			<label kind="assignment" x="127" y="-204">x_update(),
+t = 0</label>
+			<nail x="348" y="-204"/>
+			<nail x="220" y="-204"/>
+			<nail x="59" y="-204"/>
+		</transition>
+	</template>
+	<template>
+		<name>dr2</name>
+		<declaration>clock t;
+
+void x_update()
+{
+     double  rand_s = random(5)+3.0;
+    int  rand_int = fint(rand_s);
+    x_pos2 = x_pos2+ rand_int;
+}
+
+void y_update()
+{
+  double  rand_s = random(5)+3.0;
+    int  rand_int = fint(rand_s);
+ y_pos2 = y_pos2 + rand_int;
+}
+void z_update()
+{
+    double  rand_s = random(5)+3.0;
+    int  rand_int = fint(rand_s);
+    z_pos2 = z_pos2 + rand_int;
+}
+</declaration>
+		<location id="id27" x="348" y="-357">
+			<label kind="invariant" x="229" y="-331">t&lt;=pos_time_change</label>
+		</location>
+		<location id="id28" x="857" y="-484">
+			<name x="874" y="-501">No_motion</name>
+			<label kind="invariant" x="807" y="-527">t&lt;=pos_time_change</label>
+		</location>
+		<location id="id29" x="-59" y="-204">
+			<name x="-76" y="-178">X_axis</name>
+			<label kind="invariant" x="-76" y="-153">t&lt;=pos_time_change</label>
+		</location>
+		<location id="id30" x="849" y="-204">
+			<name x="832" y="-170">Y_axis</name>
+			<label kind="invariant" x="790" y="-144">t&lt;=pos_time_change</label>
+		</location>
+		<location id="id31" x="-103" y="-484">
+			<name x="-113" y="-518">z_axis</name>
+			<label kind="invariant" x="-102" y="-467">t&lt;=pos_time_change</label>
+		</location>
+		<init ref="id27"/>
+		<transition>
+			<source ref="id28"/>
+			<target ref="id27"/>
+			<label kind="guard" x="705" y="-382">t&gt;=pos_time_change</label>
+			<label kind="synchronisation" x="781" y="-374">back_no_motion2!</label>
+			<label kind="assignment" x="756" y="-399">t = 0</label>
+			<nail x="857" y="-357"/>
+			<nail x="763" y="-357"/>
+			<nail x="678" y="-357"/>
+			<nail x="593" y="-357"/>
+			<nail x="517" y="-357"/>
+			<nail x="449" y="-357"/>
+			<nail x="390" y="-357"/>
+		</transition>
+		<transition>
+			<source ref="id27"/>
+			<target ref="id28"/>
+			<label kind="guard" x="561" y="-510">t&gt;=pos_time_change</label>
+			<label kind="synchronisation" x="391" y="-501">forward_no_motion2!</label>
+			<label kind="assignment" x="391" y="-484">t = 0</label>
+			<nail x="348" y="-374"/>
+			<nail x="348" y="-433"/>
+			<nail x="348" y="-484"/>
+			<nail x="373" y="-484"/>
+		</transition>
+		<transition>
+			<source ref="id27"/>
+			<target ref="id31"/>
+			<label kind="guard" x="153" y="-518">t&gt;=pos_time_change</label>
+			<label kind="synchronisation" x="153" y="-501">forward6!</label>
+			<label kind="assignment" x="153" y="-484">z_update(),
+t = 0</label>
+			<nail x="348" y="-382"/>
+			<nail x="348" y="-433"/>
+			<nail x="348" y="-459"/>
+			<nail x="348" y="-484"/>
+			<nail x="135" y="-484"/>
+		</transition>
+		<transition>
+			<source ref="id31"/>
+			<target ref="id27"/>
+			<label kind="guard" x="-85" y="-382">t&gt;=pos_time_change</label>
+			<label kind="synchronisation" x="-85" y="-365">back6!</label>
+			<label kind="assignment" x="-25" y="-365">t = 0</label>
+			<nail x="-103" y="-348"/>
+			<nail x="186" y="-348"/>
+			<nail x="305" y="-348"/>
+			<nail x="322" y="-348"/>
+		</transition>
+		<transition>
+			<source ref="id30"/>
+			<target ref="id27"/>
+			<label kind="guard" x="578" y="-323">t&gt;=pos_time_change</label>
+			<label kind="synchronisation" x="595" y="-357">back5!</label>
+			<label kind="assignment" x="620" y="-340">t = 0</label>
+			<nail x="849" y="-246"/>
+			<nail x="849" y="-340"/>
+			<nail x="577" y="-340"/>
+			<nail x="407" y="-340"/>
+			<nail x="356" y="-340"/>
+		</transition>
+		<transition>
+			<source ref="id27"/>
+			<target ref="id30"/>
+			<label kind="guard" x="578" y="-195">t&gt;=pos_time_change</label>
+			<label kind="synchronisation" x="366" y="-221">forward5!</label>
+			<label kind="assignment" x="493" y="-204">y_update(),
+t = 0</label>
+			<nail x="348" y="-204"/>
+			<nail x="509" y="-204"/>
+			<nail x="534" y="-204"/>
+			<nail x="560" y="-204"/>
+		</transition>
+		<transition>
+			<source ref="id29"/>
+			<target ref="id27"/>
+			<label kind="guard" x="-102" y="-272">t&gt;=pos_time_change</label>
+			<label kind="synchronisation" x="-161" y="-297">back4!</label>
+			<label kind="assignment" x="-93" y="-340">t = 0</label>
+			<nail x="-86" y="-204"/>
+			<nail x="-103" y="-204"/>
+			<nail x="-111" y="-204"/>
+			<nail x="-111" y="-289"/>
+			<nail x="-111" y="-340"/>
+			<nail x="186" y="-340"/>
+			<nail x="271" y="-340"/>
+			<nail x="339" y="-340"/>
+		</transition>
+		<transition>
+			<source ref="id27"/>
+			<target ref="id29"/>
+			<label kind="guard" x="144" y="-221">t&gt;=pos_time_change</label>
+			<label kind="synchronisation" x="136" y="-161">forward4!</label>
+			<label kind="assignment" x="127" y="-204">x_update(),
+t = 0</label>
+			<nail x="348" y="-204"/>
+			<nail x="220" y="-204"/>
+			<nail x="59" y="-204"/>
+		</transition>
+	</template>
+	<system>system rep,dr1,dr2,d,Tr,Rec,data_exch;</system>
+	<queries>
+		<query>
+			<formula>A[] not deadlock</formula>
+			<comment></comment>
+		</query>
+		<query>
+			<formula></formula>
+			<comment></comment>
+		</query>
+		<query>
+			<formula></formula>
+			<comment></comment>
+		</query>
+		<query>
+			<formula>Pr[&lt;=999](&lt;&gt;data_exch.Pass)</formula>
+			<comment></comment>
+		</query>
+		<query>
+			<formula>Pr[&lt;=999](&lt;&gt;rep.Replacement_fail)</formula>
+			<comment></comment>
+		</query>
+		<query>
+			<formula></formula>
+			<comment></comment>
+		</query>
+	</queries>
+</nta>
