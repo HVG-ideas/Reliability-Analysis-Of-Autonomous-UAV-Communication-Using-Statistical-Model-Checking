@@ -9,3 +9,4 @@ The declerations template contains all the global variables that can be accessed
 6.  `scrub_time`    -----> This variable can change the scrubbing time for the transmitter and receiever
 7.  `scrub_time`    -----> This variable can change the scrubbing time for the transmitter and receiever
 8. To change the random movement speed of the
+![image](https://user-images.githubusercontent.com/68142141/120344077-41041880-c2c7-11eb-9dc0-2eb74d9bb642.png)
