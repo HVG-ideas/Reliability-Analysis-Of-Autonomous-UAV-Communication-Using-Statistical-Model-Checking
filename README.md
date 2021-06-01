@@ -11,6 +11,7 @@ The declerations template contains all the global variables that can be accessed
 5.  `rec_gain`    -----> This variable changes the receiever gain. ![image](https://user-images.githubusercontent.com/68142141/120347938-b6bdb380-c2ca-11eb-8eec-a5726a863096.png)
 
 7.   The `x_pos, y_pos, z_pos`     is used to initialize the position of UAV 2 in the x,y, and z axis. 
-8.   The `x_pos2, y_pos2, z_pos2`  is used to initialize the position of UAV 2 in the x,y, and z axis. 
-9.   
+8.   The `x_pos2, y_pos2, z_pos2`  is used to initialize the position of UAV 2 in the x,y, and z axis.  
+![image](https://user-images.githubusercontent.com/68142141/120348162-ec629c80-c2ca-11eb-80b6-31eb8f443d65.png)
+
 11. To change the random movement speed of the
