@@ -18,4 +18,16 @@ The declerations template contains all the global variables that can be accessed
 ![image](https://user-images.githubusercontent.com/68142141/120350553-16b55980-c2cd-11eb-8b1a-5eae3db1149e.png)
 11. `thresh_power_recieved`    -----> This variable changes the threshold for the receiever sensitivity. ![image](https://user-images.githubusercontent.com/68142141/120349609-3ef08880-c2cc-11eb-9338-3a625babe40f.png)
 12. The value of the transmitted power can be changed using the `power_transmitted` variable. ![image](https://user-images.githubusercontent.com/68142141/120350413-f7b6c780-c2cc-11eb-84f2-147358e800ec.png)
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Functions (Guards)
 
+
+
+
+
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
