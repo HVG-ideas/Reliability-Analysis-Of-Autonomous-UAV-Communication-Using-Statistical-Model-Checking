@@ -23,8 +23,9 @@ Functions (Guards)
 1. UAV movement function: In this function the distance moved by a UAV is calculated based on a random value defined before the experiment and is stored in the locally declared `rand_s` variable. `rand_s` is converted to an integer using the `fint` function embedded in the UPPAAL-SMC tool. The variable value is then added to the corresponding position variable based on the state in the dr1 and dr2 templates. 
 
 ![image](https://user-images.githubusercontent.com/68142141/120420685-d4266800-c332-11eb-8d05-cf1e4415a8fd.png)
-3. Power Calculation function:
-4. Receiever sensistivity boolean function :
+
+2. Power Calculation function:
+3. Receiever sensistivity boolean function :
 
 
 
