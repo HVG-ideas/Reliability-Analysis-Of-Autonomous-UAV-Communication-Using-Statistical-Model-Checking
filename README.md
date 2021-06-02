@@ -38,4 +38,6 @@ Functions (Guards) :
 ![image](https://user-images.githubusercontent.com/68142141/120422366-1ac99180-c336-11eb-9e91-36e9c594db9b.png)
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-Propoerties (queries) :
+Propoerties (queries) : 
+The query used for the paper can be checked under the verifier tab. This propoerty checks whether the replacement template will reach the Replacement_fail at any given moment within the time limit. ![image](https://user-images.githubusercontent.com/68142141/120423172-e48d1180-c337-11eb-9d93-4a5f5cc95e59.png)
+
