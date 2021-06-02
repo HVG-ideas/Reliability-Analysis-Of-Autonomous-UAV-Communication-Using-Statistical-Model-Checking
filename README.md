@@ -39,6 +39,6 @@ Functions (Guards) :
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Propoerties (queries) : 
-The query used for the paper can be checked under the verifier tab. This propoerty checks whether the replacement template will reach the Replacement_fail at any given moment within the time limit. ![image](https://user-images.githubusercontent.com/68142141/120423172-e48d1180-c337-11eb-9d93-4a5f5cc95e59.png)
+The query file ""  includes the propoerty used for the paper can be checked under the verifier tab. This propoerty checks whether the replacement template will reach the Replacement_fail at any given moment within the time limit. ![image](https://user-images.githubusercontent.com/68142141/120423172-e48d1180-c337-11eb-9d93-4a5f5cc95e59.png)
 Properites such as ![image](https://user-images.githubusercontent.com/68142141/120423333-36ce3280-c338-11eb-98c8-8e90bb858f38.png)
- can also be checked to ensure than the system does not have any deadlocks
+ can also be checked to ensure than the system does not have any deadlocks.
