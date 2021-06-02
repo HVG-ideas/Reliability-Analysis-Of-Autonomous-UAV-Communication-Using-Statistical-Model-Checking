@@ -27,7 +27,7 @@ Functions (Guards)
 2. Power Calculation function: The `int pr ()` function returns the receiever sensitivity for the given `transmitter_gain`, `rec_gain`, `power_transmitted` and calculated distance between UAV1 and UAV2 `distance_diff` in integer.
 ![image](https://user-images.githubusercontent.com/68142141/120421367-25832700-c334-11eb-956d-889feb4535cc.png)
 
-4. Receiever sensistivity boolean function : 
+4. Receiever sensistivity boolean functions : These boolean guards are used to compare the sensitivy threshold of a communication device to the calculated reciever power sensitivty. `crr` is the variable used to compare whether Pr is withing reciever sensitivity threshold and is initalized to false. The if statement returns "true" if `pr()`  is less than or equal to the `thresh_power_recieved` variable. However, if the calculated `pr()` is greater than `thresh_power_recieved` the function returns false.
 
 
 
