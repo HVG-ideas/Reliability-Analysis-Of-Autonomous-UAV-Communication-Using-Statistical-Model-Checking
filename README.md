@@ -25,7 +25,7 @@ Functions (Guards)
 ![image](https://user-images.githubusercontent.com/68142141/120420685-d4266800-c332-11eb-8d05-cf1e4415a8fd.png)
 
 2. Power Calculation function: The `int pr ()` function returns the receiever sensitivity for the given `transmitter_gain`, `rec_gain`, `power_transmitted` and calculated distance between UAV1 and UAV2 `distance_diff` in integer.
-![image](https://user-images.githubusercontent.com/68142141/120421239-ed7be400-c333-11eb-8d20-743f7386fbc1.png)
+![image](https://user-images.githubusercontent.com/68142141/120421316-100dfd00-c334-11eb-9e9d-c6075bc6fce6.png)
 
 4. Receiever sensistivity boolean function : 
 
